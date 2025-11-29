@@ -1,0 +1,32 @@
+package com.angul_ar.cinema.application;
+
+import com.angul_ar.cinema.application.port.CinemaRepository;
+import com.angul_ar.cinema.domain.Cinema;
+import java.util.List;
+import java.util.Optional;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CinemaService {
+  private final CinemaRepository cinemaRepository;
+
+  public CinemaService(CinemaRepository cinemaRepository) {
+    this.cinemaRepository = cinemaRepository;
+  }
+
+  public Cinema createCinema(Cinema cinema) {
+    return cinemaRepository.save(cinema);
+  }
+
+  public Optional<Cinema> getCinema(Long id) {
+    return cinemaRepository.findById(id);
+  }
+
+  public List<Cinema> getAllCinemas() {
+    return cinemaRepository.findAll();
+  }
+
+  public void deleteCinema(Long id) {
+    cinemaRepository.deleteById(id);
+  }
+}
