@@ -51,21 +51,21 @@ Result:
 - Postman (for API testing)
 
 ### 1. Clone the Repository
-    ```
-    git clone https://github.com/ahmedpi/angul-ar-distributed-system-microservices.git
-    cd angul-ar-distributed-system-microservices
-    ```
+```
+git clone https://github.com/ahmedpi/angul-ar-distributed-system-microservices.git
+cd angul-ar-distributed-system-microservices
+```
 ### 2. Build the Services
-    ```
-    cd cinema-service && mvn clean package && cd ..
-    cd movie-service && mvn clean package && cd ..
-    cd booking-service && mvn clean package && cd ..
-    ```
+```
+cd cinema-service && mvn clean package && cd ..
+cd movie-service && mvn clean package && cd ..
+cd booking-service && mvn clean package && cd ..
+```
 ### 3. Start All Services with Docker Compose (with local profile for security bypass)
-    ``` 
-    docker-compose up --build
-    ```
-    (Make sure each microservice in docker-compose.yml has SPRING_PROFILES_ACTIVE=local in its environment section for local dev.)
+``` 
+docker-compose up --build
+```
+(Make sure each microservice in docker-compose.yml has SPRING_PROFILES_ACTIVE=local in its environment section for local dev.)
 ### 4. Access the Services
 - Cinema Service: http://localhost:8081/cinemas
 - Movie Service: http://localhost:8082/movies
