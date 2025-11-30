@@ -61,5 +61,12 @@ services:
       - "8080:8080"
     volumes:
       - keycloak_data:/opt/keycloak/data
+
+  eureka-server:
+#    image: springcloud/eureka
+    build: ./eureka-server
+    ports:
+      - "8761:8761"
+
 volumes:
   keycloak_data:

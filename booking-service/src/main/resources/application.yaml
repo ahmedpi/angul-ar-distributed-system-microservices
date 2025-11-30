@@ -24,6 +24,11 @@ spring:
 #          issuer-uri: http://localhost:8080/realms/angul-ar
           issuer-uri: http://host.docker.internal:8080/realms/angul-ar
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+
 management:
   endpoints:
     web:
