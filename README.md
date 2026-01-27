@@ -50,6 +50,16 @@ Result:
 - Maven
 - Postman (for API testing)
 
+## Starting Docker Daemon on WSL2/Ubuntu
+
+If you are running on WSL2 or Ubuntu and Docker Desktop is **not** installed, start the Docker daemon manually before using Docker commands:
+
+```
+sudo service docker start
+```
+After starting, you can run docker ps or docker-compose up as usual.
+
+## Running the Application
 ### 1. Clone the Repository
 ```
 git clone https://github.com/ahmedpi/angul-ar-distributed-system-microservices.git
