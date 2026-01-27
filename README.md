@@ -132,7 +132,7 @@ Each service exposes:
   - Ensure the JWT iss claim matches the issuer-uri in your microservice config.
   - For local dev, use the local  profile to bypass security.
 - Keycloak data lost after restart:
-  - Do not use docker-compose down -v unless you want to reset all data.
+  - **Do not** use **docker-compose down -v** unless you want to reset all data.
 - Network issues:
   - Ensure Windows firewall allows inbound connections on port 8080 and mapped microservice ports.
 
