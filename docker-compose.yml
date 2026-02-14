@@ -7,13 +7,16 @@ services:
     volumes:
       - ./opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar
     environment:
-      - SPRING_PROFILES_ACTIVE=local
+#     - SPRING_PROFILES_ACTIVE=local
+      - SPRING_PROFILES_ACTIVE=prod
       - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
       - OTEL_SERVICE_NAME=cinema-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
       - OTEL_METRICS_EXPORTER=none
       - OTEL_LOGS_EXPORTER=none
+      - KC_HOSTNAME=keycloak
+      - KC_HTTP_PORT=8080
   movie-service:
     build: ./movie-service
     ports:
@@ -21,13 +24,16 @@ services:
     volumes:
       - ./opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar
     environment:
-      - SPRING_PROFILES_ACTIVE=local
+#      - SPRING_PROFILES_ACTIVE=local
+      - SPRING_PROFILES_ACTIVE=prod
       - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
       - OTEL_SERVICE_NAME=movie-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
       - OTEL_METRICS_EXPORTER=none
       - OTEL_LOGS_EXPORTER=none
+      - KC_HOSTNAME=keycloak
+      - KC_HTTP_PORT=8080
   booking-service:
     build: ./booking-service
     ports:
@@ -35,13 +41,16 @@ services:
     volumes:
       - ./opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar
     environment:
-      - SPRING_PROFILES_ACTIVE=local
+#     - SPRING_PROFILES_ACTIVE=local
+      - SPRING_PROFILES_ACTIVE=prod
       - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
       - OTEL_SERVICE_NAME=booking-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
       - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
       - OTEL_METRICS_EXPORTER=none
       - OTEL_LOGS_EXPORTER=none
+      - KC_HOSTNAME=keycloak
+      - KC_HTTP_PORT=8080
   jaeger:
     image: jaegertracing/all-in-one:1.53
     ports:
@@ -54,8 +63,8 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-#    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=keycloak
-    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=localhost
+    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=keycloak
+#    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=localhost
 #    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=0.0.0.0
     ports:
       - "8080:8080"
