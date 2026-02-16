@@ -21,6 +21,40 @@ This project demonstrates best practices in microservices architecture, includin
 - Local development ready (Postman, Docker Compose, WSL2/Windows support)
 - Persistent Keycloak configuration using Docker volumes
 - Profile-based security bypass for local development
+
+## API Gateway
+- Spring Cloud Gateway is used as the single entry point for all client requests.
+- It routes incoming requests to the appropriate microservice using Eureka service discovery.
+- All microservices are accessible via the gateway, simplifying client configuration and enabling cross-cutting features (security, rate limiting, etc.) in one place.
+  
+**Gateway routes:**
+- /cinemas/** → Cinema Service
+- /movies/** → Movie Service
+- /bookings/** → Booking Service
+  
+**Access the gateway at:**
+  http://localhost:8085
+
+**Example requests:**
+- http://localhost:8085/cinemas
+- http://localhost:8085/movies
+- http://localhost:8085/bookings
+
+## Service Discovery with Eureka
+- Eureka server is included as a service in docker-compose.yml and runs on port 8761.
+- Each microservice is configured as a Eureka client and registers itself automatically with the Eureka server at startup.
+- Inter-service communication uses service names (e.g., http://cinema-service/...) instead of hardcoded host:port, enabling dynamic discovery and load balancing.
+
+  Example:
+  In booking-service, you can call the cinema service using:
+  ```
+  webClientBuilder.build().get()
+    .uri("http://cinema-service/cinemas/{cinemaId}/seats/{seatNumber}/available", ...)
+    .retrieve()
+    .bodyToMono(Boolean.class)
+    .block();
+  ```
+- The Eureka dashboard is available at http://localhost:8761, where you can see all registered services and their status.
 ## Local Development Security Bypass
 For local development and testing, you can bypass security using a dedicated Spring profile (local).
 This allows you to test APIs from Postman or your browser without requiring a Bearer token.
@@ -209,8 +243,6 @@ Each service exposes:
 /opentelemetry-javaagent.jar
 
 ## Next Steps (Planned)
-  - Add API Gateway (Spring Cloud Gateway or Kong)
-  - Implement service discovery (Consul/Eureka)
   - Set up CI/CD pipelines (GitHub Actions, GitLab CI, Jenkins)
   - Prepare for cloud deployment (Kubernetes, EPAM Cloud)
   - Add CQRS and data aggregation
