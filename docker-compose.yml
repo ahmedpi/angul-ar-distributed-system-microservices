@@ -7,8 +7,8 @@ services:
     volumes:
       - ./opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar
     environment:
-#     - SPRING_PROFILES_ACTIVE=local
-      - SPRING_PROFILES_ACTIVE=prod
+#      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=local
       - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
       - OTEL_SERVICE_NAME=cinema-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
@@ -24,8 +24,8 @@ services:
     volumes:
       - ./opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar
     environment:
-#      - SPRING_PROFILES_ACTIVE=local
-      - SPRING_PROFILES_ACTIVE=prod
+#     - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=local
       - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
       - OTEL_SERVICE_NAME=movie-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
@@ -34,6 +34,8 @@ services:
       - OTEL_LOGS_EXPORTER=none
       - KC_HOSTNAME=keycloak
       - KC_HTTP_PORT=8080
+    depends_on:
+      - eureka-server
   booking-service:
     build: ./booking-service
     ports:
@@ -41,8 +43,8 @@ services:
     volumes:
       - ./opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar
     environment:
-#     - SPRING_PROFILES_ACTIVE=local
-      - SPRING_PROFILES_ACTIVE=prod
+#     - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=local
       - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
       - OTEL_SERVICE_NAME=booking-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
@@ -51,6 +53,8 @@ services:
       - OTEL_LOGS_EXPORTER=none
       - KC_HOSTNAME=keycloak
       - KC_HTTP_PORT=8080
+    depends_on:
+      - eureka-server
   jaeger:
     image: jaegertracing/all-in-one:1.53
     ports:
@@ -63,8 +67,9 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=keycloak
-#    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=localhost
+#    command: start-dev --hostname-strict=false --hostname=keycloak
+    command: start-dev --hostname-strict-https=false
+    #    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=localhost
 #    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=0.0.0.0
     ports:
       - "8080:8080"
@@ -76,6 +81,15 @@ services:
     build: ./eureka-server
     ports:
       - "8761:8761"
+
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "8085:8080"  # Expose gateway on host port 8085
+    environment:
+      - SPRING_PROFILES_ACTIVE=local
+    depends_on:
+      - eureka-server
 
 volumes:
   keycloak_data:
