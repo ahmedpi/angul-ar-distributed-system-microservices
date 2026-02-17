@@ -16,9 +16,21 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+#          issuer-uri: http://keycloak:8080/realms/angul-ar
+#          issuer-uri: http://localhost:8080/realms/angul-ar
+          issuer-uri: http://host.docker.internal:8080/realms/angul-ar
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
