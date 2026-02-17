@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: cinema-service
+          uri: lb://cinema-service
+          predicates:
+            - Path=/cinemas/**
+        - id: movie-service
+          uri: lb://movie-service
+          predicates:
+            - Path=/movies/**
+        - id: booking-service
+          uri: lb://booking-service
+          predicates:
+            - Path=/bookings/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
