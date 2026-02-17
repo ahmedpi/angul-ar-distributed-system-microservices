@@ -1,0 +1,48 @@
+stages:
+  - build
+  - test
+  - docker
+
+build:
+  stage: build
+  image: maven:3.9.6-eclipse-temurin-21
+  script:
+    - cd cinema-service && mvn clean package && cd ..
+    - cd movie-service && mvn clean package && cd ..
+    - cd booking-service && mvn clean package && cd ..
+
+test:
+  stage: test
+  image: maven:3.9.6-eclipse-temurin-21
+  script:
+    - cd cinema-service && mvn test && cd ..
+    - cd movie-service && mvn test && cd ..
+    - cd booking-service && mvn test && cd ..
+
+docker-build:
+  stage: docker
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  script:
+    - docker build -t cinema-service:latest ./cinema-service
+    - docker build -t movie-service:latest ./movie-service
+    - docker build -t booking-service:latest ./booking-service
+    - docker build -t eureka-server:latest ./eureka-server
+    - docker build -t api-gateway:latest ./api-gateway
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache openssh git
+#    - echo "$SSH_PRIVATE_KEY" > /root/.ssh/id_rsa
+#    - chmod 600 /root/.ssh/id_rsa
+#    - eval $(ssh-agent -s)
+#    - ssh-add /root/.ssh/id_rsa
+  script:
+    - ssh -o StrictHostKeyChecking=no youruser@your-server-ip '/home/youruser/project/deploy.sh'
+  only:
+    - main

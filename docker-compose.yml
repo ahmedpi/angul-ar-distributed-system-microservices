@@ -8,7 +8,7 @@ services:
       - ./opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar
     environment:
 #      - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_PROFILES_ACTIVE=local
+      -   SPRING_PROFILES_ACTIVE=local
       - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
       - OTEL_SERVICE_NAME=cinema-service
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
