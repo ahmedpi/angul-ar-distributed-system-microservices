@@ -11,6 +11,15 @@ build:
     - cd cinema-service && mvn clean package && cd ..
     - cd movie-service && mvn clean package && cd ..
     - cd booking-service && mvn clean package && cd ..
+    - cd eureka-server && mvn clean package && cd ..
+    - cd api-gateway && mvn clean package && cd ..
+  artifacts:
+    paths:
+      - cinema-service/target/*.jar
+      - movie-service/target/*.jar
+      - booking-service/target/*.jar
+      - eureka-server/target/*.jar
+      - api-gateway/target/*.jar
 
 test:
   stage: test
@@ -47,3 +56,5 @@ deploy:
     - ssh -o StrictHostKeyChecking=no youruser@your-server-ip '/home/youruser/project/deploy.sh'
   only:
     - main
+  dependencies:
+    - build
