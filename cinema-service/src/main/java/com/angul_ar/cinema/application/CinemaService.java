@@ -7,10 +7,14 @@ import com.angul_ar.cinema.application.port.CinemaRepository;
 import com.angul_ar.cinema.domain.Cinema;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class CinemaService {
+
+  private static final Logger logger = LoggerFactory.getLogger(CinemaService.class);
 
   private final CinemaRepository cinemaRepository;
 
@@ -19,6 +23,7 @@ public class CinemaService {
   }
 
   public Cinema createCinema(Cinema cinema) {
+    logger.info("Attempting to create cinema: {}", cinema);
     CinemaJpaEntity cinemaJpa = new CinemaJpaEntity();
     cinemaJpa.setName(cinema.getName());
     cinemaJpa.setLocation(cinema.getLocation());
@@ -26,7 +31,9 @@ public class CinemaService {
         .map(s -> new SeatJpaEntity(null, s.getNumber(), s.isAvailable()))
         .toList();
     cinemaJpa.setSeats(seatJpaList);
-    return cinemaRepository.save(CinemaMapper.toDomain(cinemaJpa));
+    Cinema saved = cinemaRepository.save(CinemaMapper.toDomain(cinemaJpa));
+    logger.info("Cinema created successfully: {}", saved.getId());
+    return saved;
   }
 
   public Optional<Cinema> getCinema(Long id) {
