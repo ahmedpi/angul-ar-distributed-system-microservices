@@ -1,0 +1,15 @@
+# Ignore IDE files
+.idea/
+*.iml
+
+# Ignore Maven/Gradle build output
+target/
+build/
+
+# Ignore test reports
+**/surefire-reports/
+**/test-output/
+
+# Ignore all JARs
+*.jar
+*.jar.original
