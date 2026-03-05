@@ -228,12 +228,51 @@ Each service exposes:
   - Health Endpoint: /actuator/health
   - Metrics Endpoint: /actuator/metrics
 
+## Logging
+ - All services use SLF4J with Logback for logging.
+ - A custom `logback-spring.xml` is provided for each service.
+ - **Trace ID** from distributed tracing (OpenTelemetry) is included in every log line for easy correlation across services.
+ - Example log output:
+   ```
+   2026-03-05 16:36:24.457 [http-nio-8080-exec-4] INFO c.a.b.application.BookingService - trace_id=ef71c86959b5b5fcdd12d028ec736e2a span_id=ab2ed612e2ec25c3 Booking created successfully: 1
+   ```
+
 ## Development Notes
   - H2 Console: Accessible at /h2-console for each service
   - Persistent Keycloak Data:
     - Docker volume keycloak_data ensures realms/clients/users persist across restarts.
   - Networking:
     - For local dev, use **localhost** for browser/Postman and **host.docker.internal** or **service name** for container-to-container communication as needed.
+
+## Testing
+### Unit and Integration Tests
+- Cinema and Booking microservices include both unit and integration tests (TODO: add tests to movie service)
+- Unit tests cover business logic in isolation using Mockito.
+- Integration tests use the real Spring context and in-memory H2 database, and mock external service calls where appropriate.
+- To run all tests locally:
+  ```
+  cd cinema-service && mvn test && cd ..
+  cd movie-service && mvn test && cd ..
+  cd booking-service && mvn test && cd ..
+  ```
+- Test reports are generated in the `target/surefire-reports/` directory of each service.
+
+## CI/CD Pipeline
+- The project includes a single GitLab CI/CD pipeline (`.gitlab-ci.yml`) for all services, with the following stages:
+    - **build**: Compiles and packages all microservices.
+    - **test**: Runs unit and integration tests for all microservices.
+    - **docker**: Builds Docker images for all services.
+    - **deploy**: (Currently a placeholder) Intended to deploy the services to a remote server via SSH.
+      - The deploy stage contains dummy settings and will fail unless you update it with your actual server credentials and deployment script.
+      - To enable deployment, replace `youruser@your-server-ip` and `/home/youruser/project/deploy.sh` in `.gitlab-ci.yml` with your real server details and ensure SSH keys are configured in GitLab CI/CD variables.
+- Build artifacts (JAR files) are passed between stages using GitLab artifacts.
+- The pipeline ensures that only tested and built images are deployed.
+
+## TODO
+- [ ] Configure the deploy stage in `.gitlab-ci.yml` with real server credentials and deployment script.
+- [ ] Add unit and integration tests for
+  the movie service.
+- [ ] (Optional) Add test coverage reporting and/or pipeline status badges.
 
 ## Project Structure
 /cinema-service
@@ -242,10 +281,14 @@ Each service exposes:
 /docker-compose.yml
 /opentelemetry-javaagent.jar
 
-## Next Steps (Planned)
-  - Set up CI/CD pipelines (GitHub Actions, GitLab CI, Jenkins)
-  - Prepare for cloud deployment (Kubernetes, EPAM Cloud)
-  - Add CQRS and data aggregation
+## What to Do Next (Action Plan)
+  - Implement CQRS and an aggregation endpoint.
+  - Prepare Kubernetes manifests/Helm charts for all services.
+  - Deploy to EPAM Cloud (or another cloud) and document the process.
+  - Switch to platform-provided service discovery for cloud deployment.
+  - (Optional) Split CI/CD pipelines per service.
+  - Add test coverage, logging, and API documentation.
+  - Update the README with cloud deployment, CQRS, and service discovery details.
 
 ## Troubleshooting
 - 401 Unauthorized:
