@@ -228,6 +228,15 @@ Each service exposes:
   - Health Endpoint: /actuator/health
   - Metrics Endpoint: /actuator/metrics
 
+## Logging
+ - All services use SLF4J with Logback for logging.
+ - A custom `logback-spring.xml` is provided for each service.
+ - **Trace ID** from distributed tracing (OpenTelemetry) is included in every log line for easy correlation across services.
+ - Example log output:
+   ```
+   2026-03-05 16:36:24.457 [http-nio-8080-exec-4] INFO c.a.b.application.BookingService - trace_id=ef71c86959b5b5fcdd12d028ec736e2a span_id=ab2ed612e2ec25c3 Booking created successfully: 1
+   ```
+
 ## Development Notes
   - H2 Console: Accessible at /h2-console for each service
   - Persistent Keycloak Data:
@@ -264,7 +273,7 @@ Each service exposes:
 - [ ] Add unit and integration tests for
   the movie service.
 - [ ] (Optional) Add test coverage reporting and/or pipeline status badges.
-- 
+
 ## Project Structure
 /cinema-service
 /movie-service
