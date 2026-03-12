@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class BookingControllerIntegrationTest {
+public class BookingCommandControllerIntegrationTest {
 
   @Autowired
   private MockMvc mockMvc;

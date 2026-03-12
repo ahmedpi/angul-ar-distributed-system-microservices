@@ -22,6 +22,43 @@ This project demonstrates best practices in microservices architecture, includin
 - Persistent Keycloak configuration using Docker volumes
 - Profile-based security bypass for local development
 
+## Aggregator Pattern in Booking Service
+The Booking Service implements the Aggregator Microservices Pattern to provide a unified view of booking data enriched with related cinema and movie information.
+- Endpoint:
+    ```
+    GET /aggregated-bookings (via API Gateway: http://localhost:8085/aggregated-bookings)
+    ```
+- How it works:
+The booking-service exposes an /aggregated-bookings endpoint that:
+  - Retrieves all bookings from its own database.
+  - For each booking, fetches the corresponding cinema and movie details from the cinema-service and movie-service using service discovery and REST calls.
+  - Aggregates the data into a single response object per booking, containing booking, cinema, and movie information.
+- Example Aggregated Response:
+    ```
+    [
+      {
+        "bookingId": 1,
+        "cinema": {
+          "id": 1,
+          "name": "cinema4",
+          "location": "Piazza4"
+        },
+        "movie": {
+          "id": 1,
+          "title": "fikr siferd",
+          "genre": "romantic",
+          "duration": 120
+        },
+        "seatNumber": 1,
+        "userEmail": "abc@abc.com"
+      }
+    ]
+    ```
+## CQRS Pattern
+All main services (cinema, movie, booking) implement the CQRS (Command Query Responsibility Segregation) pattern at the API/controller level:
+ - Command controllers handle write operations (POST, PUT, DELETE).
+ - Query controllers handle read operations (GET), including aggregation endpoints.
+
 ## API Gateway
 - Spring Cloud Gateway is used as the single entry point for all client requests.
 - It routes incoming requests to the appropriate microservice using Eureka service discovery.
@@ -282,7 +319,6 @@ Each service exposes:
 /opentelemetry-javaagent.jar
 
 ## What to Do Next (Action Plan)
-  - Implement CQRS and an aggregation endpoint.
   - Prepare Kubernetes manifests/Helm charts for all services.
   - Deploy to EPAM Cloud (or another cloud) and document the process.
   - Switch to platform-provided service discovery for cloud deployment.

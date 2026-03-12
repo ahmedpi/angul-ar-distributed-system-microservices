@@ -5,11 +5,9 @@ import com.angul_ar.booking.adapters.web.dto.BookingResponseDto;
 import com.angul_ar.booking.application.BookingService;
 import com.angul_ar.booking.domain.Booking;
 import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,13 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/bookings")
-public class BookingController {
+@RequiredArgsConstructor
+public class BookingCommandController {
 
   private final BookingService bookingService;
-
-  public BookingController(BookingService bookingService) {
-    this.bookingService = bookingService;
-  }
 
   @PostMapping
   public ResponseEntity<BookingResponseDto> create(@RequestBody BookingRequestDto dto) {
@@ -35,23 +30,6 @@ public class BookingController {
         created.getMovieId(),
         created.getUserEmail(), created.getSeatNumber());
     return ResponseEntity.created(URI.create("/bookings" + created.getId())).body(response);
-  }
-
-  @GetMapping("/{id}")
-  public ResponseEntity<BookingResponseDto> get(@PathVariable Long id) {
-    return bookingService.getBooking(id)
-        .map(b -> ResponseEntity.ok(new BookingResponseDto(
-            b.getId(), b.getCinemaId(), b.getMovieId(), b.getUserEmail(), b.getSeatNumber()
-        )))
-        .orElseThrow();
-  }
-
-  @GetMapping
-  public List<BookingResponseDto> getAll() {
-    return bookingService.getAllBookings().stream()
-        .map(booking -> new BookingResponseDto(booking.getId(), booking.getCinemaId(),
-            booking.getMovieId(), booking.getUserEmail(), booking.getSeatNumber()))
-        .collect(Collectors.toList());
   }
 
   @DeleteMapping("/{id}")
