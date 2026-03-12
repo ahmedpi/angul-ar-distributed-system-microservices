@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class CinemaControllerIntegrationTest {
+class CinemaCommandControllerIntegrationTest {
 
   @Autowired
   private MockMvc mockMvc;
