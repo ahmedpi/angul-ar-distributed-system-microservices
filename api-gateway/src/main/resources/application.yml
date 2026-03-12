@@ -16,11 +16,14 @@ spring:
           uri: lb://movie-service
           predicates:
             - Path=/movies/**
-        - id: booking-service
+        - id: booking-service-bookings
           uri: lb://booking-service
           predicates:
             - Path=/bookings/**
-
+        - id: booking-service-aggregated
+          uri: lb://booking-service
+          predicates:
+            - Path=/aggregated-bookings/**
 eureka:
   client:
     service-url:
