@@ -20,11 +20,14 @@ spring:
           uri: lb://booking-service
           predicates:
             - Path=/bookings/**
+        - id: booking-service-aggregated
+          uri: lb://booking-service
+          predicates:
+            - Path=/aggregated-bookings/**
         - id: loyalty-service
           uri: lb://loyalty-service
           predicates:
             - Path=/loyalty/**
-
 eureka:
   client:
     service-url:
