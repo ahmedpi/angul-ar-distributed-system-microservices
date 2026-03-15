@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -20,12 +21,13 @@ public class BookingServiceTest {
   BookingService bookingService;
   BookingRepository bookingRepository;
   WebClient.Builder webClientBuilder;
+  RabbitTemplate rabbitTemplate;
 
   @BeforeEach
   void setup() {
     bookingRepository = Mockito.mock(BookingRepository.class);
     webClientBuilder = Mockito.mock(WebClient.Builder.class);
-
+    rabbitTemplate = Mockito.mock(RabbitTemplate.class);
     // Mock the WebClient chain
     WebClient webClient = Mockito.mock(WebClient.class);
     WebClient.RequestHeadersUriSpec getSpec = Mockito.mock(WebClient.RequestHeadersUriSpec.class);
@@ -38,7 +40,7 @@ public class BookingServiceTest {
     Mockito.when(uriSpec.retrieve()).thenReturn(responseSpec);
     Mockito.when(responseSpec.bodyToMono(Boolean.class)).thenReturn(Mono.just(true));
 
-    bookingService = new BookingService(bookingRepository, webClientBuilder);
+    bookingService = new BookingService(bookingRepository, webClientBuilder, rabbitTemplate);
   }
 
   @Test

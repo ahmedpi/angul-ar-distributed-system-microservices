@@ -7,7 +7,7 @@ services:
     volumes:
       - ./opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar
     environment:
-#      - SPRING_PROFILES_ACTIVE=prod
+      #      - SPRING_PROFILES_ACTIVE=prod
       - SPRING_PROFILES_ACTIVE=local
       - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
       - OTEL_SERVICE_NAME=cinema-service
@@ -25,7 +25,7 @@ services:
     volumes:
       - ./opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar
     environment:
-#     - SPRING_PROFILES_ACTIVE=prod
+      #     - SPRING_PROFILES_ACTIVE=prod
       - SPRING_PROFILES_ACTIVE=local
       - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
       - OTEL_SERVICE_NAME=movie-service
@@ -45,7 +45,7 @@ services:
     volumes:
       - ./opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar
     environment:
-#     - SPRING_PROFILES_ACTIVE=prod
+      #     - SPRING_PROFILES_ACTIVE=prod
       - SPRING_PROFILES_ACTIVE=local
       - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
       - OTEL_SERVICE_NAME=booking-service
@@ -58,6 +58,29 @@ services:
       - KC_HTTP_PORT=8080
     depends_on:
       - eureka-server
+
+  loyalty-service:
+    build: ./loyalty-service
+    ports:
+      - "8084:8080"
+    volumes:
+      - ./opentelemetry-javaagent.jar:/app/opentelemetry-javaagent.jar
+    environment:
+      #     - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=local
+      - JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
+      - OTEL_SERVICE_NAME=loyalty-service
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_LOGS_EXPORTER=none
+      - OTEL_INSTRUMENTATION_LOGGING_ENABLED=true
+      - KC_HOSTNAME=keycloak
+      - KC_HTTP_PORT=8080
+    depends_on:
+      - rabbitmq
+      - eureka-server
+
   jaeger:
     image: jaegertracing/all-in-one:1.53
     ports:
@@ -70,17 +93,17 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-#    command: start-dev --hostname-strict=false --hostname=keycloak
+    #    command: start-dev --hostname-strict=false --hostname=keycloak
     command: start-dev --hostname-strict-https=false
     #    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=localhost
-#    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=0.0.0.0
+    #    command: start-dev --hostname-strict=false --hostname-strict-https=false --hostname=0.0.0.0
     ports:
       - "8080:8080"
     volumes:
       - keycloak_data:/opt/keycloak/data
 
   eureka-server:
-#    image: springcloud/eureka
+    #    image: springcloud/eureka
     build: ./eureka-server
     ports:
       - "8761:8761"
@@ -93,6 +116,15 @@ services:
       - SPRING_PROFILES_ACTIVE=local
     depends_on:
       - eureka-server
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
 
 volumes:
   keycloak_data:

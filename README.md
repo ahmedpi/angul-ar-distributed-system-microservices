@@ -7,6 +7,7 @@ This project demonstrates best practices in microservices architecture, includin
   - **Cinema Service**: Manages cinemas
   - **Movie Service**: Manages movies
   - **Booking Service**: Manages bookings
+  - **Loyalty Service**: Manages user loyalty points and listens for booking events
 - API Security: OAuth2/OpenID Connect via Keycloak
 - Distributed Tracing: OpenTelemetry + Jaeger
 - Containerization: Docker, orchestrated with Docker Compose
@@ -21,6 +22,25 @@ This project demonstrates best practices in microservices architecture, includin
 - Local development ready (Postman, Docker Compose, WSL2/Windows support)
 - Persistent Keycloak configuration using Docker volumes
 - Profile-based security bypass for local development
+- Event-driven messaging with RabbitMQ for decoupled, asynchronous workflows (e.g., booking → loyalty points)
+
+## Messaging & Event-Driven Architecture
+
+- **RabbitMQ** is used as the messaging backbone for asynchronous, event-driven communication between microservices.
+- **Booking Service** publishes a `booking.created` event to RabbitMQ whenever a new booking is created.
+- **Loyalty Service** listens for `booking.created` events and updates user loyalty points accordingly.
+- This decouples services, increases resilience, and enables easy extension (e.g., adding notifications, analytics, or other consumers in the future).
+- The event contract is defined as a simple JSON structure (see `BookingCreatedEvent` in each service’s `adapters.messaging` package).
+
+**RabbitMQ Management UI:**
+- Access at [http://localhost:15672](http://localhost:15672) (user: guest, password: guest).
+
+**Example Event Flow:**
+1. User creates a booking (via Booking Service).
+2. Booking Service publishes a `booking.created` event to RabbitMQ.
+3. Loyalty Service receives the event and adds points to the user’s account.
+
+---
 
 ## Aggregator Pattern in Booking Service
 The Booking Service implements the Aggregator Microservices Pattern to provide a unified view of booking data enriched with related cinema and movie information.
@@ -141,6 +161,7 @@ cd angul-ar-distributed-system-microservices
 cd cinema-service && mvn clean package && cd ..
 cd movie-service && mvn clean package && cd ..
 cd booking-service && mvn clean package && cd ..
+cd loyalty-service && mvn clean package && cd ..
 ```
 ### 3. Start All Services with Docker Compose (with local profile for security bypass)
 ``` 
@@ -156,6 +177,7 @@ docker-compose down --rmi all --volumes --remove-orphans
 - Cinema Service: http://localhost:8081/cinemas
 - Movie Service: http://localhost:8082/movies
 - Booking Service: http://localhost:8083/bookings
+- Loyalty Service: http://localhost:8084/loyalty/{userEmail}
 - Keycloak Admin Console: http://localhost:8080/auth/admin
 - Jaeger UI: http://localhost:16686
 
@@ -315,6 +337,7 @@ Each service exposes:
 /cinema-service
 /movie-service
 /booking-service
+/loyalty-service
 /docker-compose.yml
 /opentelemetry-javaagent.jar
 
