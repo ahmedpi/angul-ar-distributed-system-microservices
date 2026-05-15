@@ -23,6 +23,7 @@ public class RabbitMQConfig {
 
   @Bean
   public Binding bookingCreatedBinding(Queue bookingCreatedQueue, TopicExchange bookingExchange) {
+    // Only messages with routing key 'booking.created' will be delivered to this queue
     return BindingBuilder.bind(bookingCreatedQueue).to(bookingExchange).with("booking.created");
   }
 
