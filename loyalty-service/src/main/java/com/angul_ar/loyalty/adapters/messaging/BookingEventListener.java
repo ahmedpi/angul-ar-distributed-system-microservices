@@ -19,9 +19,16 @@ public class BookingEventListener {
   private int pointsPerBooking;
 
   @RabbitListener(queues = "booking.created.queue")
-  public void handleBookingCreated(BookingCreatedEvent bookingEvent) {
-    logger.info("Received Booking Created Event for user: {}", bookingEvent.getUserEmail());
-    loyaltyService.addPoints(bookingEvent.getUserEmail(), pointsPerBooking);
-    logger.info("Loyalty points updated for user: {}", bookingEvent.getUserEmail());
+  public void handleBookingCreated(BookingCreatedEvent bookingCreatedEvent) {
+    logger.info("Received Booking Created Event for user: {}", bookingCreatedEvent.getUserEmail());
+    loyaltyService.addPoints(bookingCreatedEvent.getUserEmail(), pointsPerBooking);
+    logger.info("Loyalty points increased for user: {}", bookingCreatedEvent.getUserEmail());
+  }
+
+  @RabbitListener(queues = "booking.canceled.queue")
+  public void handleBookingCanceled(BookingCanceledEvent bookingCanceledEvent) {
+    logger.info("Received Booking Canceled Event for user: {}", bookingCanceledEvent.getUserEmail());
+    loyaltyService.deductPoints(bookingCanceledEvent.getUserEmail(), pointsPerBooking);
+    logger.info("Loyalty points decreased for user: {}", bookingCanceledEvent.getUserEmail());
   }
 }

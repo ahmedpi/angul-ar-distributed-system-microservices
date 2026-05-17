@@ -22,9 +22,20 @@ public class RabbitMQConfig {
   }
 
   @Bean
+  public Queue bookingCanceledQueue() {
+    return new Queue("booking.canceled.queue");
+  }
+
+  @Bean
   public Binding bookingCreatedBinding(Queue bookingCreatedQueue, TopicExchange bookingExchange) {
     // Only messages with routing key 'booking.created' will be delivered to this queue
     return BindingBuilder.bind(bookingCreatedQueue).to(bookingExchange).with("booking.created");
+  }
+
+  @Bean
+  public Binding bookingCanceledBinding(Queue bookingCanceledQueue, TopicExchange bookingExchange) {
+    // Only messages with routing key 'booking.canceled' will be delivered to this queue
+    return BindingBuilder.bind(bookingCanceledQueue).to(bookingExchange).with("booking.canceled");
   }
 
   @Bean

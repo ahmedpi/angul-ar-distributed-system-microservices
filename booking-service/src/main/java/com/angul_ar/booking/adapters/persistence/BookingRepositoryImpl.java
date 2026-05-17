@@ -23,7 +23,8 @@ public class BookingRepositoryImpl implements BookingRepository {
         booking.getCinemaId(),
         booking.getMovieId(),
         booking.getUserEmail(),
-        booking.getSeatNumber()
+        booking.getSeatNumber(),
+        booking.getStatus()
     );
     BookingJpaEntity saved = jpaRepository.save(entity);
     return new Booking(
@@ -31,7 +32,8 @@ public class BookingRepositoryImpl implements BookingRepository {
         saved.getCinemaId(),
         saved.getMovieId(),
         saved.getUserEmail(),
-        saved.getSeatNumber()
+        saved.getSeatNumber(),
+        saved.getStatus()
     );
   }
 
@@ -43,7 +45,8 @@ public class BookingRepositoryImpl implements BookingRepository {
             e.getCinemaId(),
             e.getMovieId(),
             e.getUserEmail(),
-            e.getSeatNumber()
+            e.getSeatNumber(),
+            e.getStatus()
         ));
   }
 
@@ -55,7 +58,8 @@ public class BookingRepositoryImpl implements BookingRepository {
             e.getCinemaId(),
             e.getMovieId(),
             e.getUserEmail(),
-            e.getSeatNumber()
+            e.getSeatNumber(),
+            e.getStatus()
         ))
         .collect(Collectors.toList());
   }

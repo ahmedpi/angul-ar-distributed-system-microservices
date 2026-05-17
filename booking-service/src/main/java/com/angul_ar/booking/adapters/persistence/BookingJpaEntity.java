@@ -1,6 +1,9 @@
 package com.angul_ar.booking.adapters.persistence;
 
+import com.angul_ar.booking.domain.BookingStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,4 +26,6 @@ public class BookingJpaEntity {
   private Long movieId;
   private String userEmail;
   private int seatNumber;
+  @Enumerated(EnumType.STRING)
+  private BookingStatus status;
 }

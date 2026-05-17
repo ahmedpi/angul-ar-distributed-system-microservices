@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import com.angul_ar.booking.application.port.BookingRepository;
 import com.angul_ar.booking.domain.Booking;
+import com.angul_ar.booking.domain.BookingStatus;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +46,7 @@ public class BookingServiceTest {
 
   @Test
   void createBooking_shouldSaveAndReturnBooking() {
-    Booking booking = new Booking(null, 1L, 1L, null, 1);
+    Booking booking = new Booking(null, 1L, 1L, null, 1, BookingStatus.CREATED);
 
     Mockito.when(bookingRepository.save(Mockito.any())).thenReturn(booking);
 
@@ -56,7 +57,7 @@ public class BookingServiceTest {
 
   @Test
   void getBooking_shouldReturnBookingIfExists() {
-    Booking booking = new Booking(1L, 1L, 1L, null, 1);
+    Booking booking = new Booking(1L, 1L, 1L, null, 1, BookingStatus.CREATED);
 
     Mockito.when(bookingRepository.findById(Mockito.any())).thenReturn(Optional.of(booking));
 
@@ -70,7 +71,8 @@ public class BookingServiceTest {
 
   @Test
   void getAllBookings_shouldReturnList() {
-    when(bookingRepository.findAll()).thenReturn(List.of(new Booking(null, 1L, 1L, null, 1)));
+    when(bookingRepository.findAll()).thenReturn(
+        List.of(new Booking(null, 1L, 1L, null, 1, BookingStatus.CREATED)));
 
     List<Booking> bookings = bookingService.getAllBookings();
 

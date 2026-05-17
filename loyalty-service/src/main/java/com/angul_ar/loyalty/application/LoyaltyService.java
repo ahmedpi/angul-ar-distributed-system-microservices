@@ -25,8 +25,23 @@ public class LoyaltyService {
           return acc;
         });
 
-    account.setPoints(points);
+    int currentPoints = account.getPoints();
+    account.setPoints(currentPoints + points);
     repository.save(account);
+  }
+
+  @Transactional
+  public void deductPoints(String userEmail, int points) {
+    Optional<LoyaltyAccount> accountOptional = repository.findById(userEmail);
+
+    if (accountOptional.isPresent()) {
+      LoyaltyAccount loyaltyAccount = accountOptional.get();
+      int currentPoints = loyaltyAccount.getPoints();
+      int updatedPoints = currentPoints - points;
+      loyaltyAccount.setPoints(Math.max(updatedPoints, 0));
+
+      repository.save(loyaltyAccount);
+    }
   }
 
   public Optional<LoyaltyAccount> getPoints(String userEmail) {

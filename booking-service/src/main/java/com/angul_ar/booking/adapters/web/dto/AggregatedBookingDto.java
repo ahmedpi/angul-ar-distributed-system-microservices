@@ -13,5 +13,4 @@ public class AggregatedBookingDto {
   private MovieDto movie;
   private int seatNumber;
   private String userEmail;
-  // getters/setters
 }

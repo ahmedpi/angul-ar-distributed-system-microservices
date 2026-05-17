@@ -1,5 +1,6 @@
 package com.angul_ar.booking.adapters.web.dto;
 
+import com.angul_ar.booking.domain.BookingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

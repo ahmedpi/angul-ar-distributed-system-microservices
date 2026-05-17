@@ -1,8 +1,10 @@
 package com.angul_ar.booking.application;
 
+import com.angul_ar.booking.adapters.messaging.BookingCanceledEvent;
 import com.angul_ar.booking.adapters.messaging.BookingCreatedEvent;
 import com.angul_ar.booking.application.port.BookingRepository;
 import com.angul_ar.booking.domain.Booking;
+import com.angul_ar.booking.domain.BookingStatus;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
@@ -39,6 +41,7 @@ public class BookingService {
     }
 
     // ... movie availability check and booking logic ...
+    booking.setStatus(BookingStatus.CREATED);
     Booking saved = bookingRepository.save(booking);
 
     BookingCreatedEvent event = new BookingCreatedEvent();
@@ -53,6 +56,25 @@ public class BookingService {
 
     logger.info("Booking created successfully: {}", saved.getId());
     return saved;
+  }
+
+  public void cancelBooking(Long bookingId) {
+    logger.info("Attempting to cancel booking with id: {}", bookingId);
+
+    Booking booking = bookingRepository.findById(bookingId)
+        .orElseThrow(() -> new IllegalArgumentException(String.format("Booking with id %s not found", bookingId)));
+
+    booking.cancel();
+    bookingRepository.save(booking);
+
+    BookingCanceledEvent event = new BookingCanceledEvent();
+    event.setUserEmail(booking.getUserEmail());
+    event.setBookingId(booking.getId());
+
+    // Publish event
+    rabbitTemplate.convertAndSend("booking.exchange", "booking.canceled", event);
+
+    logger.info("Booking canceled successfully: {}", bookingId);
   }
 
   public Optional<Booking> getBooking(Long id) {
