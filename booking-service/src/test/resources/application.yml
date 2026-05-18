@@ -11,3 +11,11 @@ spring:
     port: 5672
     username: guest
     password: guest
+
+movie:
+  service:
+    url: http://localhost:8082
+
+cinema:
+  service:
+    url: http://localhost:8081

@@ -23,19 +23,20 @@ public class BookingCommandController {
 
   @PostMapping
   public ResponseEntity<BookingResponseDto> create(@RequestBody BookingRequestDto dto) {
-    Booking booking = Booking.create(dto.getCinemaId(), dto.getMovieId(), dto.getUserEmail(), dto.getSeatNumber());
+    Booking booking = Booking.create(dto.getCinemaId(), dto.getMovieId(), dto.getUserEmail(),
+        dto.getSeatNumber());
 
     Booking created = bookingService.createBooking(booking);
 
     BookingResponseDto response = new BookingResponseDto(created.getId(), created.getCinemaId(),
         created.getMovieId(),
-        created.getUserEmail(), created.getSeatNumber());
+        created.getUserEmail(), created.getSeatNumber(), created.getStatus());
     return ResponseEntity.created(URI.create("/bookings" + created.getId())).body(response);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> delete(@PathVariable Long id) {
-    bookingService.cancelBooking(id);
+    bookingService.cancelBooking(id, true);
     return ResponseEntity.noContent().build();
   }
 }

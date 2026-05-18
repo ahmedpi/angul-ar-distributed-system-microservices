@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.angul_ar.booking.adapters.web.dto.BookingResponseDto;
+import com.angul_ar.booking.adapters.web.dto.CinemaDto;
 import com.angul_ar.booking.application.port.BookingRepository;
 import com.angul_ar.booking.domain.Booking;
 import com.angul_ar.booking.domain.BookingStatus;
@@ -21,11 +23,13 @@ public class BookingServiceTest {
 
   BookingService bookingService;
   BookingRepository bookingRepository;
+  CinemaClient cinemaClient;
   WebClient.Builder webClientBuilder;
   RabbitTemplate rabbitTemplate;
 
   @BeforeEach
   void setup() {
+    cinemaClient = Mockito.mock(CinemaClient.class);
     bookingRepository = Mockito.mock(BookingRepository.class);
     webClientBuilder = Mockito.mock(WebClient.Builder.class);
     rabbitTemplate = Mockito.mock(RabbitTemplate.class);
@@ -41,7 +45,12 @@ public class BookingServiceTest {
     Mockito.when(uriSpec.retrieve()).thenReturn(responseSpec);
     Mockito.when(responseSpec.bodyToMono(Boolean.class)).thenReturn(Mono.just(true));
 
-    bookingService = new BookingService(bookingRepository, webClientBuilder, rabbitTemplate);
+    Mockito.when(cinemaClient.getCinema(Mockito.anyLong()))
+        .thenReturn(new CinemaDto(1L, "Test Cinema", "Test Address"));
+    Mockito.when(cinemaClient.isSeatAvailable(Mockito.anyLong(), Mockito.anyInt()))
+        .thenReturn(true);
+
+    bookingService = new BookingService(bookingRepository, cinemaClient, webClientBuilder, rabbitTemplate);
   }
 
   @Test
@@ -61,7 +70,7 @@ public class BookingServiceTest {
 
     Mockito.when(bookingRepository.findById(Mockito.any())).thenReturn(Optional.of(booking));
 
-    Optional<Booking> result = bookingService.getBooking(1L);
+    Optional<BookingResponseDto> result = bookingService.getBookingDto(1L);
     Assertions.assertTrue(result.isPresent());
     Assertions.assertEquals(1L, result.get().getId());
     Assertions.assertEquals(1L, result.get().getCinemaId());
@@ -74,7 +83,7 @@ public class BookingServiceTest {
     when(bookingRepository.findAll()).thenReturn(
         List.of(new Booking(null, 1L, 1L, null, 1, BookingStatus.CREATED)));
 
-    List<Booking> bookings = bookingService.getAllBookings();
+    List<BookingResponseDto> bookings = bookingService.getAllBookingDtos();
 
     assertEquals(1, bookings.size());
   }

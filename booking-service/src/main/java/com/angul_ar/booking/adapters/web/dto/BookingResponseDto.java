@@ -1,5 +1,6 @@
 package com.angul_ar.booking.adapters.web.dto;
 
+import com.angul_ar.booking.domain.BookingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,4 +12,5 @@ public class BookingResponseDto {
   private Long movieId;
   private String userEmail;
   private int seatNumber;
+  private BookingStatus status;
 }

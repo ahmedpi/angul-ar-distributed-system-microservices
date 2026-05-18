@@ -45,3 +45,11 @@ logging:
   level:
     org.springframework.security: DEBUG
     org.springframework.security.oauth2: DEBUG
+
+movie:
+  service:
+    url: http://movie-service:8080
+
+cinema:
+  service:
+    url: http://cinema-service:8080
